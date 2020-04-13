@@ -19,22 +19,15 @@ $new_password_err = $confirm_password_err = "";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     // Validate new password
-    if(empty(trim($_POST["new_password"]))){
-        $new_password_err = "Please enter the new password.";
-    } elseif(strlen(trim($_POST["new_password"])) < 6){
-        $new_password_err = "Password must have atleast 6 characters.";
-    } else{
-        $new_password = trim($_POST["new_password"]);
-    }
+    if(empty(trim($_POST["new_password"]))) $new_password_err = "Please enter the new password.";
+    elseif(strlen(trim($_POST["new_password"])) < 6) $new_password_err = "Password must have atleast 6 characters.";
+    else $new_password = trim($_POST["new_password"]);
 
     // Validate confirm password
-    if(empty(trim($_POST["confirm_password"]))){
-        $confirm_password_err = "Please confirm the password.";
-    } else{
+    if(empty(trim($_POST["confirm_password"]))) $confirm_password_err = "Please confirm the password.";
+    else{
         $confirm_password = trim($_POST["confirm_password"]);
-        if(empty($new_password_err) && ($new_password != $confirm_password)){
-            $confirm_password_err = "Password did not match.";
-        }
+        if(empty($new_password_err) && ($new_password != $confirm_password)) $confirm_password_err = "Password did not match.";
     }
 
     // Check input errors before updating the database
@@ -42,16 +35,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Prepare an update statement
         $sql = "UPDATE users SET password = ? WHERE id = ?";
 
-        if($stmt = mysqli_prepare($link, $sql)){
+        if($stmt = $mysqli->prepare($sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "si", $param_password, $param_id);
+            $stmt->bind_param("si", $param_password, $param_id);
 
             // Set parameters
             $param_password = password_hash($new_password, PASSWORD_DEFAULT);
             $param_id = $_SESSION["id"];
 
             // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
+            if($stmt->execute()){
                 // Password updated successfully. Destroy the session, and redirect to login page
                 session_destroy();
                 header("location: login.php");
@@ -61,12 +54,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
 
             // Close statement
-            mysqli_stmt_close($stmt);
+            $stmt->close();
         }
     }
 
     // Close connection
-    mysqli_close($link);
+    $mysqli->close();
 }
 ?>
 
@@ -88,11 +81,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group <?php echo (!empty($new_password_err)) ? 'has-error' : ''; ?>">
                 <input type="password" name="new_password" class="form-control" placeholder="New Password" value="<?php echo $new_password; ?>">
-                <span class="help-block"><?php echo $new_password_err; ?></span>
+                <span class="form-text text-danger"><?php echo $new_password_err; ?></span>
             </div>
             <div class="form-group <?php echo (!empty($confirm_password_err)) ? 'has-error' : ''; ?>">
                 <input type="password" name="confirm_password" placeholder="Confirm Password" class="form-control">
-                <span class="help-block"><?php echo $confirm_password_err; ?></span>
+                <span class="form-text text-danger"><?php echo $confirm_password_err; ?></span>
             </div>
             <div class="form-group row">
                 <div class="col"><input type="submit" class="btn btn-primary btn-block" value="Submit"></div>
