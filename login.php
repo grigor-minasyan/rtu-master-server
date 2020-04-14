@@ -80,9 +80,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <!DOCTYPE html>
 <head>
     <title>Login to MasterMon</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="js/jquery-3.4.1.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-3.5.0.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
   <div class="container text-center">
