@@ -17,20 +17,20 @@ function topFunction() {
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
 
-function draw_threshold(id, t1, t2, t3, t4, cur) {
+function draw_threshold(id, t1, t2, t3, t4, cur, unit) {
   t1 = parseInt(t1);
   t2 = parseInt(t2);
   t3 = parseInt(t3);
   t4 = parseInt(t4);
   cur = parseInt(cur);
-  if (!is_celcius) {
+  if (!is_celcius && unit == "c") {
     t1 = to_f(t1);
     t2 = to_f(t2);
     t3 = to_f(t3);
     t4 = to_f(t4);
     cur = to_f(cur);
   }
-  var canvas = document.getElementById("threshold_canvas_" + id.toString());
+  var canvas = document.getElementById(id);
 	var width = canvas.offsetWidth;
 	var height = canvas.offsetHeight;
   var ctx = canvas.getContext("2d");
@@ -38,37 +38,37 @@ function draw_threshold(id, t1, t2, t3, t4, cur) {
   var range = t4-t1;
   var start = t1 - 0.2*range;
   var end = t4 + 0.2*range;
-  ctx.font = "15px Arial";
-
+  ctx.font = "18px Arial";
+  var start_y = 27, text_offset = 18;
 
   ctx.fillStyle = "#6a0dad";
-  ctx.fillRect(0,15,width*(t1-start)/(end-start),height/2);
+  ctx.fillRect(0,start_y,width*(t1-start)/(end-start),height/2);
 
   ctx.fillStyle = "#2731e6";
-  ctx.fillRect(width*(t1-start)/(end-start),15,width*(t2-t1)/(end-start),height/2);
-  ctx.fillText(t1.toFixed(1).toString(), width*(t1-start)/(end-start)-9, 12);
+  ctx.fillRect(width*(t1-start)/(end-start),start_y,width*(t2-t1)/(end-start),height/2);
+  ctx.fillText(t1.toFixed(1).toString(), width*(t1-start)/(end-start)-text_offset, start_y-10);
 
   ctx.fillStyle = "#2cbf40";
-  ctx.fillRect(width*(t2-start)/(end-start),15,width*(t3-t2)/(end-start),height/2);
-  ctx.fillText(t2.toFixed(1).toString(), width*(t2-start)/(end-start)-9, 12);
+  ctx.fillRect(width*(t2-start)/(end-start),start_y,width*(t3-t2)/(end-start),height/2);
+  ctx.fillText(t2.toFixed(1).toString(), width*(t2-start)/(end-start)-text_offset, start_y-10);
 
   ctx.fillStyle = "#a19600";
-  ctx.fillRect(width*(t3-start)/(end-start),15,width*(t4-t3)/(end-start),height/2);
-  ctx.fillText(t3.toFixed(1).toString(), width*(t3-start)/(end-start)-9, 12);
+  ctx.fillRect(width*(t3-start)/(end-start),start_y,width*(t4-t3)/(end-start),height/2);
+  ctx.fillText(t3.toFixed(1).toString(), width*(t3-start)/(end-start)-text_offset, start_y-10);
 
   ctx.fillStyle = "#cf2115";
-  ctx.fillRect(width*(t4-start)/(end-start),15,width*(end-t4)/(end-start),height/2);
-  ctx.fillText(t4.toFixed(1).toString(), width*(t4-start)/(end-start)-9, 12);
+  ctx.fillRect(width*(t4-start)/(end-start),start_y,width*(end-t4)/(end-start),height/2);
+  ctx.fillText(t4.toFixed(1).toString(), width*(t4-start)/(end-start)-text_offset, start_y-10);
 
   var cur_pos = cur;
-  if (cur_pos < start+5*range/100) {
-    cur_pos = start+5*range/100;
-  } else if (cur_pos > end-5*range/100) {
-    cur_pos = end-5*range/100;
+  if (cur_pos < start+6*range/100) {
+    cur_pos = start+6*range/100;
+  } else if (cur_pos > end-6*range/100) {
+    cur_pos = end-6*range/100;
   }
   ctx.fillStyle = "#222222";
-  ctx.fillRect(width*(cur_pos-start)/(end-start),15,2,height/2+10);
-  ctx.fillText(cur.toFixed(1).toString(), width*(cur_pos-start)/(end-start)-8, height/2+40);
+  ctx.fillRect(width*(cur_pos-start)/(end-start),start_y,2,height/2+10);
+  ctx.fillText(cur.toFixed(1).toString() + (unit == "c" ? (is_celcius ? "C" : "F") : unit), width*(cur_pos-start)/(end-start)-text_offset, height/2+start_y+30);
 }
 
 function validate_form(ipaddress, port, id){
@@ -96,7 +96,7 @@ function temp_toggle() {
     $("#temp_toggle").html("F");
   }
 }
-
+/*
 function submit_rtu_data() {
   let ip_address = document.getElementById("ip_address").value;
   var port = document.getElementById("port").value;
@@ -197,7 +197,6 @@ function change_hisory_count() {
   }
 }
 
-
 var RTU_obj;
 function update_temp(id) {
   $.getJSON($SCRIPT_ROOT + '/_update_cur_temp/' + id.toString(), function(data) {
@@ -247,31 +246,56 @@ function update_temp(id) {
   });
   return false;
 }
-
-function update_temp_new(id) {
+*/
+function update_temp_new() {
   $.ajax({
     url:"/post_responder.php",
     type:"POST",
     contentType:"application/json",
     success: function(data){
-      console.log(data);
+      //updating the device information device_info_table_
+      data_obj = JSON.parse(data);
+      for (let i = 0; i < data_obj.length; i++) {
+        let table_info_str = "";
+        table_info_str += "<td>" + data_obj[i].rtu_id + "</td>";
+        table_info_str += "<td>" + data_obj[i].rtu_ip + "</td>";
+        table_info_str += "<td>" + data_obj[i].rtu_port + "</td>";
+        table_info_str += "<td>" + data_obj[i].type + "</td>";
+        table_info_str += "<td>" + (data_obj[i].link ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") + "</td>";
+        table_info_str += "<td>" + data_obj[i].display_count + "</td>";
+        $("#device_info_table_"+data_obj[i].rtu_id).html(table_info_str);
+
+        //updating the standing alarms table
+        let standing_str = "";
+        let alarm_count = 0;
+        for (let j = 0; j < data_obj[i].standing.length; j++) {
+          standing_str +="<tr>";
+          standing_str += "<td>" + data_obj[i].standing[j].display + "</td>";
+          standing_str += "<td>" + (data_obj[i].standing[j].mj_und_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
+          standing_str += "<td>" + (data_obj[i].standing[j].mn_und_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
+          standing_str += "<td>" + (data_obj[i].standing[j].mn_ovr_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
+          standing_str += "<td>" + (data_obj[i].standing[j].mj_ovr_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
+          standing_str += "</tr>";
+
+          //updating the canvases
+          $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).html("<canvas id=\"threshold_canvas_" + data_obj[i].standing[j].rtu_id_display + "\" width=\"" + $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).width() + "\" height=\"200\">Unsupported</canvas>");
+          draw_threshold("threshold_canvas_" + data_obj[i].standing[j].rtu_id_display,
+            data_obj[i].standing[j].mj_und_val, data_obj[i].standing[j].mn_und_val,
+            data_obj[i].standing[j].mn_ovr_val, data_obj[i].standing[j].mj_ovr_val,
+            data_obj[i].standing[j].value, data_obj[i].standing[j].unit);
+
+        }
+        $("#standing_table_"+data_obj[i].rtu_id).html(standing_str);
+        //change the standing alarm text to red if there are any alarms
+        if (alarm_count) $("#v-pills-standing-" + data_obj[i].rtu_id + "-tab").addClass("text-danger");
+        else $("#v-pills-standing-" + data_obj[i].rtu_id + "-tab").removeClass("text-danger");
+
+
+      }
     }
   })
-  // console.log(2);
-  // $.post("/post_responder.php", function(data) {
-  //   console.log("test");
-  //   console.log(data);
-  // }, "json");
-
 }
 
 window.setInterval(function(){
-  update_temp_new(1);
-  for (let i = 0; i < RTU_id_list.length; i++) {
-    // update_temp(RTU_id_list[i]);
-  }
+  update_temp_new();
 }, update_delay);
-
-window.onload = function() {
-  // get_id_list();
-};

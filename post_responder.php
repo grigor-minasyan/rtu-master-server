@@ -10,6 +10,9 @@ if (stripos($content_type, 'application/json') === false) {
   throw new Exception("\nContent-Type must be application/json, not not not not not ".$_SERVER['CONTENT_TYPE']);
 }
 
+// Include config file
+require_once "config.php";
+
 // // Read the input stream
 // $body = file_get_contents("php://input");
 //
@@ -24,10 +27,24 @@ if (stripos($content_type, 'application/json') === false) {
 // Display the object
 // print_r($object);
 
-$myObj->name = "John";
-$myObj->age = 30;
-$myObj->city = "New York";
+$sql = "SELECT * FROM rtu_list";
+$rtu_list = $mysqli->query($sql);
+$returnJSON = array();
+if ($rtu_list->num_rows > 0) {
+  while($row = $rtu_list->fetch_object()) {
+    // sending information about displays, this includes standing alarms too
+    $row->standing = array();
+    $sql_stnd = "SELECT * from standing_alarms WHERE rtu_id = {$row->rtu_id}";
+    $displat_list = $mysqli->query($sql_stnd);
+    if ($displat_list->num_rows > 0) {
+      while($row_display = $displat_list->fetch_object()) {
+        array_push($row->standing, $row_display);
+      }
+    }
 
-$myJSON = json_encode($myObj);
+    array_push($returnJSON, $row);
+    unset($row);
+  }
+} else echo "0 RTUs found";
 
-echo $myJSON;
+echo json_encode($returnJSON);

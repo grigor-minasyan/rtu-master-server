@@ -129,21 +129,31 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                               <th scope=\"col\">Type</th>
                               <th scope=\"col\">Link status</th>
                               <th scope=\"col\">Displays</th>
-                            </tr></thead><tbody><tr>";
-              $str2 .= "<td>" . strval($row["rtu_id"]) . "</td>";
-              $str2 .= "<td>" . strval($row["rtu_ip"]) . "</td>";
-              $str2 .= "<td>" . strval($row["rtu_port"]) . "</td>";
-              $str2 .= "<td>" . strval($row["type"]) . "</td>";
-              $str2 .= "<td>" . ($row["link"] ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") . "</td>";
-              $str2 .= "<td>" . strval($row["display_count"]) . "</td>";
+                            </tr></thead><tbody><tr id = \"device_info_table_{$cur_id}\">";
+
+              // $str2 .= "<td>" . strval($row["rtu_id"]) . "</td>";
+              // $str2 .= "<td>" . strval($row["rtu_ip"]) . "</td>";
+              // $str2 .= "<td>" . strval($row["rtu_port"]) . "</td>";
+              // $str2 .= "<td>" . strval($row["type"]) . "</td>";
+              // $str2 .= "<td>" . ($row["link"] ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") . "</td>";
+              // $str2 .= "<td>" . strval($row["display_count"]) . "</td>";
+
               $str2 .= "</tr></tbody></table>";
 
 
               $displays_text_tab = $displays_text = "";
               for ($x = 1; $x <= $row['display_count']; $x++) {
-                $displays_text_tab .= "<a class=\"nav-link\" id=\"v-pills-display-{$cur_id}-{$x}-tab\" data-toggle=\"pill\" href=\"#v-pills-display-{$cur_id}-{$x}\" role=\"tab\" aria-controls=\"v-pills-display-{$cur_id}-{$x}\" aria-selected=\"false\">Display #{$x}</a>";
-                $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}-{$x}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}-{$x}-tab\">Inside Display #{$cur_id}-{$x}</div>";
+                $displays_text_tab .= "<a class=\"nav-link\" id=\"v-pills-display-{$cur_id}_{$x}-tab\" data-toggle=\"pill\" href=\"#v-pills-display-{$cur_id}_{$x}\" role=\"tab\" aria-controls=\"v-pills-display-{$cur_id}_{$x}\" aria-selected=\"false\">Display #{$x}</a>";
+                $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}_{$x}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}_{$x}-tab\"></div>";
               }
+
+              $stnd_alm_txt = "<table class=\"table\"><thead><tr>
+                                            <th scope=\"col\">Display</th>
+                                            <th scope=\"col\">Major under</th>
+                                            <th scope=\"col\">Minor under</th>
+                                            <th scope=\"col\">Minor over</th>
+                                            <th scope=\"col\">Major over</th>
+                                          </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
 
               $str2 .= "<div class=\"row\">
                           <div class=\"col-3\">
@@ -156,7 +166,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           <div class=\"col-9\">
                             <div class=\"tab-content\" id=\"v-pills-tabContent\">
                               <div class=\"tab-pane fade show active\" id=\"v-pills-event-history-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-event-history-{$cur_id}-tab\">Inside Event history {$cur_id}</div>
-                              <div class=\"tab-pane fade\" id=\"v-pills-standing-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-standing-{$cur_id}-tab\">Inside Standing alarms {$cur_id}</div>
+                              <div class=\"tab-pane fade\" id=\"v-pills-standing-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-standing-{$cur_id}-tab\">{$stnd_alm_txt}</div>
                               {$displays_text}
                             </div>
                           </div>
@@ -181,7 +191,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             $str2 .= '</div>';
             echo $str;
             echo $str2;
-        } else echo "0 results";
+        } else echo "0 RTUs found";
       ?>
 
     </div>
