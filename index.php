@@ -148,11 +148,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
               }
 
               $stnd_alm_txt = "<table class=\"table\"><thead><tr>
-                                            <th scope=\"col\">Display</th>
-                                            <th scope=\"col\">Major under</th>
-                                            <th scope=\"col\">Minor under</th>
-                                            <th scope=\"col\">Minor over</th>
-                                            <th scope=\"col\">Major over</th>
+                                            <th scope=\"col\">Display #</th>
+                                            <th scope=\"col\">Display name</th>
+                                            <th scope=\"col\">Point</th>
+                                            <th scope=\"col\">Description</th>
+                                            <th scope=\"col\">Status</th>
                                           </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
 
               $str2 .= "<div class=\"row\">

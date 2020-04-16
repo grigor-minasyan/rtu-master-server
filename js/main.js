@@ -270,19 +270,21 @@ function update_temp_new() {
         let alarm_count = 0;
         for (let j = 0; j < data_obj[i].standing.length; j++) {
           standing_str +="<tr>";
+
           standing_str += "<td>" + data_obj[i].standing[j].display + "</td>";
-          standing_str += "<td>" + (data_obj[i].standing[j].mj_und_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
-          standing_str += "<td>" + (data_obj[i].standing[j].mn_und_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
-          standing_str += "<td>" + (data_obj[i].standing[j].mn_ovr_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
-          standing_str += "<td>" + (data_obj[i].standing[j].mj_ovr_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
+          standing_str += "<td>" + data_obj[i].standing[j].long_desc + "</td>";
+          standing_str += "<td>" + data_obj[i].standing[j].point + "</td>";
+          standing_str += "<td>" + data_obj[i].standing[j].description + "</td>";
+          standing_str += "<td>" + (data_obj[i].standing[j].is_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
           standing_str += "</tr>";
 
           //updating the canvases
-          $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).html("<canvas id=\"threshold_canvas_" + data_obj[i].standing[j].rtu_id_display + "\" width=\"" + $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).width() + "\" height=\"200\">Unsupported</canvas>");
-          draw_threshold("threshold_canvas_" + data_obj[i].standing[j].rtu_id_display,
-            data_obj[i].standing[j].mj_und_val, data_obj[i].standing[j].mn_und_val,
-            data_obj[i].standing[j].mn_ovr_val, data_obj[i].standing[j].mj_ovr_val,
-            data_obj[i].standing[j].value, data_obj[i].standing[j].unit);
+          // $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).html("<canvas id=\"threshold_canvas_" + data_obj[i].standing[j].rtu_id_display + "\" width=\"" + $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).width() + "\" height=\"200\">Unsupported</canvas>");
+          //
+          // draw_threshold("threshold_canvas_" + data_obj[i].standing[j].rtu_id_display,
+          //   data_obj[i].standing[j].mj_und_val, data_obj[i].standing[j].mn_und_val,
+          //   data_obj[i].standing[j].mn_ovr_val, data_obj[i].standing[j].mj_ovr_val,
+          //   data_obj[i].standing[j].value, data_obj[i].standing[j].unit);
 
         }
         $("#standing_table_"+data_obj[i].rtu_id).html(standing_str);
