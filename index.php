@@ -27,7 +27,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <div class="row">
           <div class="col-sm">
             <h4 class="text-primary">Fill out this form and submit to add a new device to monitor</h4>
-            <form class="form-group my-2 my-lg-0" onsubmit="submit_rtu_data()">
+            <form class="form-group my-2 my-lg-0" onsubmit="submit_rtu_data(); return false">
               <div class="form-group">
                 <input type="text" class="form-control mr-sm-2" id="ip_address" placeholder="IP address">
               </div>
@@ -42,7 +42,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
           </div>
           <div class="col-sm">
             <h4 class="text-primary">Fill out this form and submit to remove a device from monitoring</h4>
-            <form class="form-group my-2 my-lg-0" onsubmit="id_to_remove()">
+            <form class="form-group my-2 my-lg-0" onsubmit="id_to_remove(); return false">
               <div class="form-group">
                 <input type="text" class="form-control mr-sm-2" id="device_id_to_remove" placeholder="Device id">
               </div>
