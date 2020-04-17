@@ -11,6 +11,7 @@ var RTU_id_list = [];
 var is_celcius = 0;
 var max_hist = 200;
 
+const DELETE_BUTTON = "<svg class=\"bi bi-trash-fill\" width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z\" clip-rule=\"evenodd\"/></svg>";
 
 function topFunction() {
   document.body.scrollTop = 0; // For Safari
@@ -186,16 +187,6 @@ function id_to_remove() {
   }
 }
 
-function change_hisory_count() {
-  var new_h = document.getElementById("new_history_count").value;
-  if (isNaN(new_h) || new_h < 1 || new_h % 1 != 0) {
-    alert("Number is invalid");
-    return false;
-  } else {
-    max_hist = new_h;
-    return false;
-  }
-}
 
 var RTU_obj;
 function update_temp(id) {
@@ -247,11 +238,29 @@ function update_temp(id) {
   return false;
 }
 */
+
+
+function change_hisory_count() {
+  var new_h = document.getElementById("new_history_count").value;
+  if (isNaN(new_h) || new_h < 1 || new_h % 1 != 0) {
+    alert("Number is invalid");
+    return false;
+  } else {
+    max_hist = new_h;
+    return false;
+  }
+}
+
+function delete_event(id) {
+  console.log(id);
+}
+
 function update_temp_new() {
   $.ajax({
     url:"/post_responder.php",
     type:"POST",
     contentType:"application/json",
+    data: JSON.stringify({max_hist : max_hist}),
     success: function(data){
       //updating the device information device_info_table_
       data_obj = JSON.parse(data);
@@ -261,36 +270,60 @@ function update_temp_new() {
         table_info_str += "<td>" + data_obj[i].rtu_ip + "</td>";
         table_info_str += "<td>" + data_obj[i].rtu_port + "</td>";
         table_info_str += "<td>" + data_obj[i].type + "</td>";
-        table_info_str += "<td>" + (data_obj[i].link ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") + "</td>";
+        table_info_str += "<td>" + (data_obj[i].link == "1" ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") + "</td>";
         table_info_str += "<td>" + data_obj[i].display_count + "</td>";
         $("#device_info_table_"+data_obj[i].rtu_id).html(table_info_str);
+
+        //updating the events table
+        let events_str = "";
+        for (let j = 0; j < data_obj[i].events.length; j++) {
+          events_str +="<tr>";
+          let event_id = data_obj[i].events[j].event_id;
+          events_str += "<td><button type=\"button\" class=\"btn btn-danger\" onclick=\"delete_event(" + event_id + ")\">" + DELETE_BUTTON + "</button></td>";
+          events_str += "<td>" + data_obj[i].events[j].time + "</td>";
+          events_str += "<td>" + data_obj[i].events[j].description + "</td>";
+          events_str += "<td>" + data_obj[i].events[j].type + "</td>";
+          events_str += "<td>" + data_obj[i].events[j].display + "</td>";
+          events_str += "<td>" + data_obj[i].events[j].point + "</td>";
+          let val = Number(data_obj[i].events[j].value);
+          let unit_v = data_obj[i].events[j].unit;
+          events_str += "<td>" + (unit_v == "c" ? (is_celcius ? val : to_f(val)) : val) + "</td>";
+          events_str += "<td>" + (unit_v == "c" ? (is_celcius ? unit_v : "f") : unit_v) + "</td>";
+          events_str += "</tr>";
+        }
+        $("#events_table_"+data_obj[i].rtu_id).html(events_str);
+
 
         //updating the standing alarms table
         let standing_str = "";
         let alarm_count = 0;
         for (let j = 0; j < data_obj[i].standing.length; j++) {
           standing_str +="<tr>";
-
           standing_str += "<td>" + data_obj[i].standing[j].display + "</td>";
           standing_str += "<td>" + data_obj[i].standing[j].long_desc + "</td>";
           standing_str += "<td>" + data_obj[i].standing[j].point + "</td>";
           standing_str += "<td>" + data_obj[i].standing[j].description + "</td>";
           standing_str += "<td>" + (data_obj[i].standing[j].is_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
           standing_str += "</tr>";
-
-          //updating the canvases
-          // $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).html("<canvas id=\"threshold_canvas_" + data_obj[i].standing[j].rtu_id_display + "\" width=\"" + $("#v-pills-display-"+data_obj[i].standing[j].rtu_id_display).width() + "\" height=\"200\">Unsupported</canvas>");
-          //
-          // draw_threshold("threshold_canvas_" + data_obj[i].standing[j].rtu_id_display,
-          //   data_obj[i].standing[j].mj_und_val, data_obj[i].standing[j].mn_und_val,
-          //   data_obj[i].standing[j].mn_ovr_val, data_obj[i].standing[j].mj_ovr_val,
-          //   data_obj[i].standing[j].value, data_obj[i].standing[j].unit);
-
         }
         $("#standing_table_"+data_obj[i].rtu_id).html(standing_str);
         //change the standing alarm text to red if there are any alarms
         if (alarm_count) $("#v-pills-standing-" + data_obj[i].rtu_id + "-tab").addClass("text-danger");
         else $("#v-pills-standing-" + data_obj[i].rtu_id + "-tab").removeClass("text-danger");
+
+
+
+        //updating the thresholds
+        for (let k = 0; k < Number(data_obj[i].display_count); k++) {
+          //updating the canvases
+          let id_text = data_obj[i].standing[4*k].rtu_id + "_" + data_obj[i].standing[4*k].display;
+          // console.log(id_text);
+          $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
+          draw_threshold("threshold_canvas_" + id_text,
+            data_obj[i].standing[4*k+0].threshold_value, data_obj[i].standing[4*k+1].threshold_value,
+            data_obj[i].standing[4*k+2].threshold_value, data_obj[i].standing[4*k+3].threshold_value,
+            data_obj[i].standing[4*k].analog_value, data_obj[i].standing[4*k].unit);
+        }
 
 
       }

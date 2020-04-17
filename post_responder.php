@@ -13,16 +13,9 @@ if (stripos($content_type, 'application/json') === false) {
 // Include config file
 require_once "config.php";
 
-// // Read the input stream
-// $body = file_get_contents("php://input");
-//
-// // Decode the JSON object
-// $object = json_decode($body, true);
-//
-// // Throw an exception if decoding failed
-// if (!is_array($object)) {
-//   throw new Exception('Failed to decode JSON object');
-// }
+// Read the input stream
+$body = file_get_contents("php://input");
+$max_hist = json_decode($body)->max_hist;
 
 // Display the object
 // print_r($object);
@@ -41,6 +34,19 @@ if ($rtu_list->num_rows > 0) {
         array_push($row->standing, $row_display);
       }
     }
+
+    //sending the events
+    $row->events = array();
+    $sql_events = "SELECT * from event_history WHERE rtu_id = {$row->rtu_id} ORDER BY time DESC";
+    $events = $mysqli->query($sql_events);
+    if ($events->num_rows > 0) {
+      $i = $max_hist;
+      while(($row_events = $events->fetch_object()) && $i--) {
+        array_push($row->events, $row_events);
+      }
+    }
+
+    $row->testing = json_decode($body)->max_hist;
 
     array_push($returnJSON, $row);
     unset($row);

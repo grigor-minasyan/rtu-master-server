@@ -29,7 +29,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <div class="collapse" id="navbarToggleExternalContent">
       <div class="bg-light p-4">
         <div class="row">
-
           <div class="col-sm">
             <h4 class="text-primary">Fill out this form and submit to add a new device to monitor</h4>
             <form class="form-group my-2 my-lg-0" onsubmit="submit_rtu_data()">
@@ -103,7 +102,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <?php
         $sql = "SELECT * FROM rtu_list";
         $rtu_list = $mysqli->query($sql);
-        $str = '<div class="col-2 nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">';
+        $str = '<div class="col-2 nav flex-column nav-pills bg-light" id="v-pills-tab" role="tablist" aria-orientation="vertical"><h4>Select a device to monitor</h4>';
         $str2 = '<div class="col-10 tab-content" id="v-pills-tabContent">';
 
         if ($rtu_list->num_rows > 0) {
@@ -147,7 +146,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}_{$x}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}_{$x}-tab\"></div>";
               }
 
-              $stnd_alm_txt = "<table class=\"table\"><thead><tr>
+              $stnd_alm_txt = "<table class=\"table table-striped\"><thead><tr>
                                             <th scope=\"col\">Display #</th>
                                             <th scope=\"col\">Display name</th>
                                             <th scope=\"col\">Point</th>
@@ -155,8 +154,21 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <th scope=\"col\">Status</th>
                                           </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
 
+
+              $events_in_text = "<table class=\"table table-striped\"><thead><tr>
+                                          <th scope=\"col\">Delete</th>
+                                          <th scope=\"col\">Time</th>
+                                          <th scope=\"col\">Description</th>
+                                          <th scope=\"col\">Type</th>
+                                          <th scope=\"col\">Display</th>
+                                          <th scope=\"col\">Point</th>
+                                          <th scope=\"col\">Value</th>
+                                          <th scope=\"col\">Unit</th>
+                                        </tr></thead><tbody id = \"events_table_{$cur_id}\"></tbody></table>";                        
+
+
               $str2 .= "<div class=\"row\">
-                          <div class=\"col-3\">
+                          <div class=\"col-3 bg-light\">
                             <div class=\"nav flex-column nav-pills\" id=\"v-pills-tab\" role=\"tablist\" aria-orientation=\"vertical\">
                               <a class=\"nav-link active\" id=\"v-pills-event-history-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-event-history-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-event-history-{$cur_id}\" aria-selected=\"true\">Event history</a>
                               <a class=\"nav-link\" id=\"v-pills-standing-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-standing-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-standing-{$cur_id}\" aria-selected=\"false\">Standing alarms</a>
@@ -165,7 +177,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           </div>
                           <div class=\"col-9\">
                             <div class=\"tab-content\" id=\"v-pills-tabContent\">
-                              <div class=\"tab-pane fade show active\" id=\"v-pills-event-history-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-event-history-{$cur_id}-tab\">Inside Event history {$cur_id}</div>
+                              <div class=\"tab-pane fade show active\" id=\"v-pills-event-history-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-event-history-{$cur_id}-tab\">$events_in_text</div>
                               <div class=\"tab-pane fade\" id=\"v-pills-standing-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-standing-{$cur_id}-tab\">{$stnd_alm_txt}</div>
                               {$displays_text}
                             </div>
