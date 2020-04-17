@@ -10,7 +10,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-
 ?>
 
 <!DOCTYPE html>
@@ -22,9 +21,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
-
-
-
   <div class="pos-f-t sticky-top">
     <div class="collapse" id="navbarToggleExternalContent">
       <div class="bg-light p-4">
@@ -44,7 +40,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
               <button type="submit" class="btn btn-primary my-2 my-sm-0">Submit</button>
             </form>
           </div>
-
           <div class="col-sm">
             <h4 class="text-primary">Fill out this form and submit to remove a device from monitoring</h4>
             <form class="form-group my-2 my-lg-0" onsubmit="id_to_remove()">
@@ -54,8 +49,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
               <button type="submit" class="btn btn-primary my-2 my-sm-0">Submit</button>
             </form>
           </div>
-
-
           <div class="col-sm">
             <h4 class="text-primary">Max number of items in history page</h4>
             <form class="form-group my-2 my-lg-0" onsubmit="change_hisory_count(); return false">
@@ -65,12 +58,10 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
               <button type="submit" class="btn btn-primary my-2 my-sm-0">Change</button>
             </form>
           </div>
-
           <div class = "col-sm">
             <h4 class="text-primary">Click this to toggle between Celcius and Fahrenheit</h4>
             <button type="button" class="btn btn-primary btn-lg btn-block" onclick="temp_toggle()" id="temp_toggle">F</button>
           </div>
-
         </div>
       </div>
     </div>
@@ -83,9 +74,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <a class="btn btn-danger" href="logout.php" role="button">Sign out</a>
     </nav>
   </div>
-
-
-
   <div class="container">
     <div class="row justify-content-center py-4">
       <div class="col-10 text-center">
@@ -94,17 +82,12 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <p>You can also change units of temperature in the top menu and how many items show in the history page</p>
       </div>
     </div>
-
-
-
     <div class="row mt-4">
-
       <?php
         $sql = "SELECT * FROM rtu_list";
         $rtu_list = $mysqli->query($sql);
-        $str = '<div class="col-2 nav flex-column nav-pills bg-light" id="v-pills-tab" role="tablist" aria-orientation="vertical"><h4>Select a device to monitor</h4>';
+        $str = '<div class="col-2 nav flex-column nav-pills bg-light p-2" id="v-pills-tab" role="tablist" aria-orientation="vertical"><h4>Select a device to monitor</h4>';
         $str2 = '<div class="col-10 tab-content" id="v-pills-tabContent">';
-
         if ($rtu_list->num_rows > 0) {
             // output data of each row
             $i = 0;
@@ -113,7 +96,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
               $str .= "<a class=\"nav-link" . ($i ? "" : " active") . "\" id=\"devices_tab_{$cur_id}";
               $str .= "\" data-toggle=\"pill\" href=\"#devices_tab_inside_{$cur_id}";
               $str .= "\" role=\"tab\" aria-controls=\"devices_tab_inside_{$cur_id}";
-              $str .= "\" aria-selected=\"" . ($i ? "false" : "true") . "\">Device #{$cur_id}</a>";
+              $str .= "\" aria-selected=\"" . ($i ? "false" : "true") . "\">Device #{$cur_id} <span class = \"text-danger alarm-icon-{$cur_id}\"></span></a>";
 
 
               $str2 .= "<div class=\"tab-pane fade" . ($i ? "" : " show active") . "\" id=\"devices_tab_inside_{$cur_id}";
@@ -130,13 +113,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                               <th scope=\"col\">Displays</th>
                             </tr></thead><tbody><tr id = \"device_info_table_{$cur_id}\">";
 
-              // $str2 .= "<td>" . strval($row["rtu_id"]) . "</td>";
-              // $str2 .= "<td>" . strval($row["rtu_ip"]) . "</td>";
-              // $str2 .= "<td>" . strval($row["rtu_port"]) . "</td>";
-              // $str2 .= "<td>" . strval($row["type"]) . "</td>";
-              // $str2 .= "<td>" . ($row["link"] ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") . "</td>";
-              // $str2 .= "<td>" . strval($row["display_count"]) . "</td>";
-
               $str2 .= "</tr></tbody></table>";
 
 
@@ -152,7 +128,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <th scope=\"col\">Point</th>
                                             <th scope=\"col\">Description</th>
                                             <th scope=\"col\">Status</th>
-                                          </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
+                                            </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
 
 
               $events_in_text = "<table class=\"table table-striped\"><thead><tr>
@@ -164,14 +140,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                           <th scope=\"col\">Point</th>
                                           <th scope=\"col\">Value</th>
                                           <th scope=\"col\">Unit</th>
-                                        </tr></thead><tbody id = \"events_table_{$cur_id}\"></tbody></table>";                        
+                                          </tr></thead><tbody id = \"events_table_{$cur_id}\"></tbody></table>";
 
 
-              $str2 .= "<div class=\"row\">
-                          <div class=\"col-3 bg-light\">
+              $str2 .= "<div class=\"row mt-5\">
+                          <div class=\"col-3 bg-light p-2\">
                             <div class=\"nav flex-column nav-pills\" id=\"v-pills-tab\" role=\"tablist\" aria-orientation=\"vertical\">
                               <a class=\"nav-link active\" id=\"v-pills-event-history-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-event-history-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-event-history-{$cur_id}\" aria-selected=\"true\">Event history</a>
-                              <a class=\"nav-link\" id=\"v-pills-standing-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-standing-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-standing-{$cur_id}\" aria-selected=\"false\">Standing alarms</a>
+                              <a class=\"nav-link\" id=\"v-pills-standing-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-standing-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-standing-{$cur_id}\" aria-selected=\"false\">Standing alarms <span class = \"text-danger alarm-icon-{$cur_id}\"></span></a>
                               {$displays_text_tab}
                             </div>
                           </div>
@@ -183,18 +159,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             </div>
                           </div>
                         </div>";
-
-
-              // $str2 .= '<h4>Current temperature is <span class = "temp_to_update" id="temp' . strval($row['rtu_id']);
-              // $str2 .= '"></span>' . '</h4><h4>Current humidity is <span id="hum' . strval($row['rtu_id']);
-              // $str2 .= '"></span>%</h4>';
-              // $str2 .= '<canvas id="threshold_canvas_' . strval($row['rtu_id']);
-              // $str2 .= '" width="500" height="100">Your browser does not support the canvas element.</canvas>';
-              // $str2 .= '<h4><span id="alarm' . strval($row['rtu_id']);
-              // $str2 .= '"></span></h4><p>History</p><table class="table table-striped">';
-              // $str2 .= '<thead><tr><th scope="col">#</th><th scope="col">Date</th><th scope="col">Time</th><th scope="col">Temperature</th><th scope="col">Humidity</th></tr></thead>';
-              // $str2 .= '<tbody id = "history' . strval($row['rtu_id']);
-              // $str2 .= '"></tbody></table>';
               $str2 .= '</div></div>';
 
               $i++;
@@ -207,15 +171,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       ?>
 
     </div>
-
-    <!-- <div class="row justify-content-center">
-      <div class="col-5">
-        <a class="btn btn-outline-secondary btn-block" href="reset-password.php" role="button">Reset password</a>
-      </div>
-      <div class="col-5">
-        <a class="btn btn-outline-danger btn-block" href="logout.php" role="button">Sign out</a>
-      </div>
-    </div> -->
   </div>
 </body>
 </html>

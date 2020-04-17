@@ -1,21 +1,23 @@
-// var cur_temp = 15;//{{ cur_temp }};
 let update_delay = 1000;
-let RTU_id = 2;
-let RTU2_id = 3;
 
 function to_f(c) {
-  return (1.8*c+32);
+  return Number((1.8*c+32).toFixed(1));
 }
 
-var RTU_id_list = [];
 var is_celcius = 0;
 var max_hist = 200;
 
-const DELETE_BUTTON = "<svg class=\"bi bi-trash-fill\" width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z\" clip-rule=\"evenodd\"/></svg>";
+const DELETE_ICON = "<svg class=\"bi bi-trash-fill\" width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z\" clip-rule=\"evenodd\"/></svg>";
 
+const ALERT_ICON = "<svg class=\"bi bi-exclamation-circle-fill\" width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M16 8A8 8 0 110 8a8 8 0 0116 0zM8 4a.905.905 0 00-.9.995l.35 3.507a.552.552 0 001.1 0l.35-3.507A.905.905 0 008 4zm.002 6a1 1 0 100 2 1 1 0 000-2z\" clip-rule=\"evenodd\"/></svg>";
 function topFunction() {
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+function add_alm_icon(x, id) {
+  if (x) $(".alarm-icon-" + id).html(ALERT_ICON);
+  else $(".alarm-icon-" + id).html("");
 }
 
 function draw_threshold(id, t1, t2, t3, t4, cur, unit) {
@@ -97,147 +99,6 @@ function temp_toggle() {
     $("#temp_toggle").html("F");
   }
 }
-/*
-function submit_rtu_data() {
-  let ip_address = document.getElementById("ip_address").value;
-  var port = document.getElementById("port").value;
-  var device_id = document.getElementById("device_id").value;
-  if (validate_form(ip_address, port, device_id)) {
-    $('input[type="text"], textarea').val('');
-    // alert("\nIP: " + ip_address + "\nPort: " + port + "\nDevice ID: " + device_id + "\nForm Submitted Successfully......");
-    $.getJSON($SCRIPT_ROOT + '/_monitor_new_rtu/' + ip_address.toString() + '/' + port.toString() + '/' + device_id.toString(), function(data) {
-      if(data.success) {
-        alert(data.message);
-        RTU_id_list.push(Number(device_id));
-        location.reload();
-        return true;
-      } else {
-        alert(data.message);
-        return false;
-      }
-    });
-  }
-}
-
-function get_id_list() {
-  $.getJSON($SCRIPT_ROOT + '/_get_id_list/', function(data) {
-    RTU_id_list = data;
-    str = "";
-    str2 = "";
-    for (var i = 0; i < RTU_id_list.length; i++) {
-      str += "<a class=\"nav-link" + (i ? "" : " active") + "\" id=\"devices_tab_";
-      str += RTU_id_list[i].toString();
-      str += "\" data-toggle=\"pill\" href=\"#devices_tab_inside_";
-      str += RTU_id_list[i].toString();
-      str += "\" role=\"tab\" aria-controls=\"devices_tab_inside_";
-      str += RTU_id_list[i].toString();
-      str += "\" aria-selected=\"" + (i ? "false" : "true") + "\">Device #";
-      str += RTU_id_list[i].toString();
-      str += "</a>";
-
-      str2 += "<div class=\"tab-pane fade" + (i ? "" : " show active") + "\" id=\"devices_tab_inside_";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\" role=\"tabpanel\" aria-labelledby=\"devices_tab_";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\"><div class=\"col\"><h4>Current temperature is <span class = \"temp_to_update\" id=\"temp";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\"></span>" + "</h4><h4>Current humidity is <span id=\"hum";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\"></span>%</h4>";
-      str2 += "<canvas id=\"threshold_canvas_";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\" width=\"500\" height=\"100\">Your browser does not support the canvas element.</canvas>";
-      str2 += "<h4><span id=\"alarm";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\"></span></h4><p>History</p><table class=\"table table-striped\">";
-      str2 += "<thead><tr><th scope=\"col\">#</th><th scope=\"col\">Date</th><th scope=\"col\">Time</th><th scope=\"col\">Temperature</th><th scope=\"col\">Humidity</th></tr></thead>";
-      str2 += "<tbody id = \"history";
-      str2 += RTU_id_list[i].toString();
-      str2 += "\"></tbody></table></div></div>";
-
-
-    }
-    $("#v-pills-tab").html(str);
-    $("#v-pills-tabContent").html(str2);
-  });
-}
-
-function id_to_remove() {
-  var device_id = document.getElementById("device_id_to_remove").value;
-  if (isNaN(device_id) || device_id < 1 || device_id % 1 != 0) {
-    alert("ID number is invalid");
-    return false;
-  } else {
-    $('input[type="text"], textarea').val('');
-    $.getJSON($SCRIPT_ROOT + '/_remove_device/' + device_id.toString(), function(data) {
-      if(data.success) {
-        alert(data.message);
-        for(var i = 0; i < RTU_id_list.length; i++){
-          if (RTU_id_list[i] == Number(device_id)) {
-            RTU_id_list.splice(i, 1);
-          }
-        }
-        location.reload();
-        return true;
-      } else {
-        alert(data.message);
-        return false;
-      }
-    });
-  }
-}
-
-
-var RTU_obj;
-function update_temp(id) {
-  $.getJSON($SCRIPT_ROOT + '/_update_cur_temp/' + id.toString(), function(data) {
-    RTU_obj = data;
-    RTU_obj[4].sort(function(item2, item1){
-      if (item1[0] != item2[0]) return item1[0] - item2[0]
-      else if (item1[1] != item2[1]) return item1[1] - item2[1];
-      else if (item1[2] != item2[2]) return item1[2] - item2[2];
-      else if (item1[3] != item2[3]) return item1[3] - item2[3];
-      else if (item1[4] != item2[4]) return item1[4] - item2[4];
-      else if (item1[5] != item2[5]) return item1[5] - item2[5];
-      else return 0;
-    });
-    str = "";
-    for (let i = 0; i < Object.keys(RTU_obj[4]).length && i < max_hist; i++) {
-      str = str + "<tr><td>" + (i+1).toString() + "</td><td>" +
-      RTU_obj[4][i][1].toString() + "/" +
-      RTU_obj[4][i][2].toString() + "/" +
-      RTU_obj[4][i][0].toString() + "</td><td>" +
-      RTU_obj[4][i][3].toString() + ":" +
-      RTU_obj[4][i][4].toString() + ":" +
-      RTU_obj[4][i][5].toString() + "</td><td class = \"temp_to_update\">" +
-      (is_celcius ? RTU_obj[4][i][6] : to_f(RTU_obj[4][i][6])).toFixed(1).toString() + (is_celcius ? "C" : "F") + " </td><td>" +
-      RTU_obj[4][i][7].toString() + "%" +"</td></tr>";
-    }
-    $("#history"+id.toString()).html(str);
-    $("#temp"+id.toString()).html((is_celcius ? RTU_obj[3][6] : to_f(RTU_obj[3][6]).toFixed(1)).toString() + (is_celcius ? "C" : "F"));
-    $("#hum"+id.toString()).html(RTU_obj[3][7]);
-
-
-    draw_threshold(id, RTU_obj[1][0], RTU_obj[1][1], RTU_obj[1][2], RTU_obj[1][3], RTU_obj[3][6]);
-    if(RTU_obj[2] == 3) {
-      //major over
-      $("#alarm"+id.toString()).html("Alarm MJ OVER!");
-    } else if (RTU_obj[2] == 2) {
-      //minor over
-      $("#alarm"+id.toString()).html("Alarm MN OVER!");
-    } else if (RTU_obj[2] == 4) {
-      // minor under
-      $("#alarm"+id.toString()).html("Alarm MN UNDER!");
-    } else if (RTU_obj[2] == 12) {
-      //major under
-      $("#alarm"+id.toString()).html("Alarm MJ UNDER!");
-    } else {
-      $("#alarm"+id.toString()).html("No alarm, everything clear");
-    }
-  });
-  return false;
-}
-*/
 
 
 function change_hisory_count() {
@@ -252,8 +113,56 @@ function change_hisory_count() {
 }
 
 function delete_event(id) {
-  console.log(id);
+  $.ajax({
+    url:"/_delete_event.php",
+    type:"POST",
+    contentType:"application/json",
+    data: JSON.stringify({event_id_to_delete : id}),
+    success: function(data){
+      alert(data);
+    }
+  })
 }
+
+function id_to_remove() {
+  var device_id = document.getElementById("device_id_to_remove").value;
+  if (isNaN(device_id) || device_id < 1 || device_id % 1 != 0) {
+    alert("ID number is invalid");
+    return false;
+  } else {
+    $('input[type="text"], textarea').val('');
+    $.ajax({
+      url:"/_delete_device.php",
+      type:"POST",
+      contentType:"application/json",
+      data: JSON.stringify({device_id_to_delete : device_id.toString()}),
+      success: function(data){
+        alert(data);
+      }
+    })
+  }
+}
+
+
+function submit_rtu_data() {
+  let ip_address = document.getElementById("ip_address").value;
+  var port = document.getElementById("port").value;
+  var device_id = document.getElementById("device_id").value;
+  if (validate_form(ip_address, port, device_id)) {
+    $('input[type="text"], textarea').val('');
+    // alert("\nIP: " + ip_address + "\nPort: " + port + "\nDevice ID: " + device_id + "\nForm Submitted Successfully......");
+    $.ajax({
+      url:"/_add_device.php",
+      type:"POST",
+      contentType:"application/json",
+      data: JSON.stringify({rtu_id : device_id.toString(), rtu_ip: ip_address.toString(), port: port.toString()}),
+      success: function(data){
+        alert(data);
+      }
+    })
+  }
+}
+
 
 function update_temp_new() {
   $.ajax({
@@ -270,6 +179,7 @@ function update_temp_new() {
         table_info_str += "<td>" + data_obj[i].rtu_ip + "</td>";
         table_info_str += "<td>" + data_obj[i].rtu_port + "</td>";
         table_info_str += "<td>" + data_obj[i].type + "</td>";
+        add_alm_icon(data_obj[i].link != "1", data_obj[i].rtu_id);
         table_info_str += "<td>" + (data_obj[i].link == "1" ? "<span class = \"text-success\">Online</span>" : "<span class = \"text-danger\">Offline</span>") + "</td>";
         table_info_str += "<td>" + data_obj[i].display_count + "</td>";
         $("#device_info_table_"+data_obj[i].rtu_id).html(table_info_str);
@@ -279,7 +189,7 @@ function update_temp_new() {
         for (let j = 0; j < data_obj[i].events.length; j++) {
           events_str +="<tr>";
           let event_id = data_obj[i].events[j].event_id;
-          events_str += "<td><button type=\"button\" class=\"btn btn-danger\" onclick=\"delete_event(" + event_id + ")\">" + DELETE_BUTTON + "</button></td>";
+          events_str += "<td><button type=\"button\" class=\"btn btn-danger\" onclick=\"delete_event(" + event_id + ")\">" + DELETE_ICON + "</button></td>";
           events_str += "<td>" + data_obj[i].events[j].time + "</td>";
           events_str += "<td>" + data_obj[i].events[j].description + "</td>";
           events_str += "<td>" + data_obj[i].events[j].type + "</td>";
@@ -308,10 +218,9 @@ function update_temp_new() {
         }
         $("#standing_table_"+data_obj[i].rtu_id).html(standing_str);
         //change the standing alarm text to red if there are any alarms
-        if (alarm_count) $("#v-pills-standing-" + data_obj[i].rtu_id + "-tab").addClass("text-danger");
-        else $("#v-pills-standing-" + data_obj[i].rtu_id + "-tab").removeClass("text-danger");
-
-
+        add_alm_icon(alarm_count, data_obj[i].rtu_id);
+        // if (alarm_count) $(".alarm-icon-" + data_obj[i].rtu_id).html(ALERT_ICON);
+        // else $(".alarm-icon-" + data_obj[i].rtu_id).html("");
 
         //updating the thresholds
         for (let k = 0; k < Number(data_obj[i].display_count); k++) {
@@ -324,8 +233,6 @@ function update_temp_new() {
             data_obj[i].standing[4*k+2].threshold_value, data_obj[i].standing[4*k+3].threshold_value,
             data_obj[i].standing[4*k].analog_value, data_obj[i].standing[4*k].unit);
         }
-
-
       }
     }
   })

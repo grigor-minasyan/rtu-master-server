@@ -46,8 +46,6 @@ if ($rtu_list->num_rows > 0) {
       }
     }
 
-    $row->testing = json_decode($body)->max_hist;
-
     array_push($returnJSON, $row);
     unset($row);
   }
