@@ -29,13 +29,20 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             <h4 class="text-primary">Fill out this form and submit to add a new device to monitor</h4>
             <form class="form-group my-2 my-lg-0" onsubmit="submit_rtu_data(); return false">
               <div class="form-group">
-                <input type="text" class="form-control mr-sm-2" id="ip_address" placeholder="IP address">
+                <input type="text" class="form-control mr-sm-2" id="ip_address" placeholder="IP address" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control mr-sm-2" id="port" placeholder="Port">
+                <input type="text" class="form-control mr-sm-2" id="port" placeholder="Port" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control mr-sm-2" id="device_id" placeholder="Device id">
+                <input type="text" class="form-control mr-sm-2" id="device_id" placeholder="Device id" required>
+              </div>
+              <div class="form-group">
+                <label for="select_rtu_type">Select RTU type</label>
+                <select class="form-control" id="select_rtu_type" required>
+                  <option>arduino</option>
+                  <option>temp_def_g2</option>
+                </select>
               </div>
               <button type="submit" class="btn btn-primary my-2 my-sm-0">Submit</button>
             </form>
@@ -44,7 +51,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             <h4 class="text-primary">Fill out this form and submit to remove a device from monitoring</h4>
             <form class="form-group my-2 my-lg-0" onsubmit="id_to_remove(); return false">
               <div class="form-group">
-                <input type="text" class="form-control mr-sm-2" id="device_id_to_remove" placeholder="Device id">
+                <input type="text" class="form-control mr-sm-2" id="device_id_to_remove" placeholder="Device id" required>
               </div>
               <button type="submit" class="btn btn-primary my-2 my-sm-0">Submit</button>
             </form>

@@ -137,6 +137,7 @@ function id_to_remove() {
       contentType:"application/json",
       data: JSON.stringify({device_id_to_delete : device_id.toString()}),
       success: function(data){
+        location.reload();
         alert(data);
       }
     })
@@ -148,6 +149,8 @@ function submit_rtu_data() {
   let ip_address = document.getElementById("ip_address").value;
   var port = document.getElementById("port").value;
   var device_id = document.getElementById("device_id").value;
+  var device_type = document.getElementById("select_rtu_type").value;
+  console.log(device_type);
   if (validate_form(ip_address, port, device_id)) {
     $('input[type="text"], textarea').val('');
     // alert("\nIP: " + ip_address + "\nPort: " + port + "\nDevice ID: " + device_id + "\nForm Submitted Successfully......");
@@ -155,8 +158,12 @@ function submit_rtu_data() {
       url:"/_add_device.php",
       type:"POST",
       contentType:"application/json",
-      data: JSON.stringify({rtu_id : device_id.toString(), rtu_ip: ip_address.toString(), port: port.toString()}),
+      data: JSON.stringify({rtu_id : device_id.toString(),
+                            rtu_ip: ip_address.toString(),
+                            port: port.toString(),
+                            type: device_type}),
       success: function(data){
+        location.reload();
         alert(data);
       }
     })
