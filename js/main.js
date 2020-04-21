@@ -137,8 +137,8 @@ function id_to_remove() {
       contentType:"application/json",
       data: JSON.stringify({device_id_to_delete : device_id.toString()}),
       success: function(data){
-        location.reload();
         alert(data);
+        location.reload();
       }
     })
   }
@@ -163,8 +163,8 @@ function submit_rtu_data() {
                             port: port.toString(),
                             type: device_type}),
       success: function(data){
-        location.reload();
         alert(data);
+        location.reload();
       }
     })
   }
