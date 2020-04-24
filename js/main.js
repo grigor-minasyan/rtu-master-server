@@ -252,6 +252,7 @@ function update_temp_new() {
         if (data_obj[i].type == "temp_def_g2") {
 
           let first_analog_i = 0;
+          // finding the index of first analog
           for (; first_analog_i < data_obj[i].standing.length && data_obj[i].standing[first_analog_i].display != data_obj[i].analog_start; first_analog_i++);
           // console.log(first_analog_i);
           
@@ -263,7 +264,7 @@ function update_temp_new() {
                 let id_text = data_obj[i].standing[first_analog_i+8*k+4*o].rtu_id + "_" + data_obj[i].standing[first_analog_i+8*k+4*o].display + "_" + (o+1).toString();
                 // console.log(id_text);
                 let name_id = `#v-pills-display-${data_obj[i].standing[first_analog_i+8*k+4*o].rtu_id}_${data_obj[i].standing[first_analog_i+8*k+4*o].display}_${o+1}-tab`;
-                console.log(name_id);
+                // console.log(name_id);
 
                 var str =data_obj[i].standing[first_analog_i+8*k+4*o].description;
                 var lastIndex = str.lastIndexOf(" ");
@@ -273,8 +274,8 @@ function update_temp_new() {
 
                 $(name_id).html(str);
 
-
-                $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
+                let canvas_text = `<canvas id="threshold_canvas_${id_text}" width="${$("#v-pills-display-"+id_text).width()}" height="200">Unsupported</canvas>`;
+                $("#v-pills-display-"+id_text).html(canvas_text);
                 draw_threshold("threshold_canvas_" + id_text,
                   data_obj[i].standing[first_analog_i+8*k+4*o+0].threshold_value, data_obj[i].standing[first_analog_i+8*k+4*o+1].threshold_value,
                   data_obj[i].standing[first_analog_i+8*k+4*o+2].threshold_value, data_obj[i].standing[first_analog_i+8*k+4*o+3].threshold_value,

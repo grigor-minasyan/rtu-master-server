@@ -149,6 +149,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 }
               }
 
+
+
+              // change those two to be the exact same withot a copy paste, only 1 word is different
               $stnd_alm_txt = "<table class=\"table table-striped\"><thead><tr>
                                             <th scope=\"col\">Display #</th>
                                             <th scope=\"col\">Point</th>
