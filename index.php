@@ -125,13 +125,19 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
               $displays_text_tab = $displays_text = "";
               for ($x = 1; $x <= $row['display_count']; $x++) {
+                if ($row['type'] == "arduino") {
+                  ;
+                } else if ($row['type'] == "temp_def_g2") {
+                  if ($x < $row['analog_start'] || $x > $row['analog_end']) {
+                    continue;
+                  }
+                }
                 $displays_text_tab .= "<a class=\"nav-link\" id=\"v-pills-display-{$cur_id}_{$x}-tab\" data-toggle=\"pill\" href=\"#v-pills-display-{$cur_id}_{$x}\" role=\"tab\" aria-controls=\"v-pills-display-{$cur_id}_{$x}\" aria-selected=\"false\">Display #{$x}</a>";
                 $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}_{$x}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}_{$x}-tab\"></div>";
               }
 
               $stnd_alm_txt = "<table class=\"table table-striped\"><thead><tr>
                                             <th scope=\"col\">Display #</th>
-                                            <th scope=\"col\">Display name</th>
                                             <th scope=\"col\">Point</th>
                                             <th scope=\"col\">Description</th>
                                             <th scope=\"col\">Status</th>

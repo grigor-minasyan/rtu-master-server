@@ -215,9 +215,9 @@ function update_temp_new() {
         let standing_str = "";
         let alarm_count = 0;
         for (let j = 0; j < data_obj[i].standing.length; j++) {
+          if (data_obj[i].standing[j].is_set == "0" || data_obj[i].standing[j].is_enabled == "0") {continue;}
           standing_str +="<tr>";
           standing_str += "<td>" + data_obj[i].standing[j].display + "</td>";
-          standing_str += "<td>" + data_obj[i].standing[j].long_desc + "</td>";
           standing_str += "<td>" + data_obj[i].standing[j].point + "</td>";
           standing_str += "<td>" + data_obj[i].standing[j].description + "</td>";
           standing_str += "<td>" + (data_obj[i].standing[j].is_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";

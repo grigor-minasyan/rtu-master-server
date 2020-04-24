@@ -31,7 +31,9 @@ if ($rtu_list->num_rows > 0) {
     $displat_list = $mysqli->query($sql_stnd);
     if ($displat_list->num_rows > 0) {
       while($row_display = $displat_list->fetch_object()) {
-        array_push($row->standing, $row_display);
+        // if ($row_display->is_set) {
+          array_push($row->standing, $row_display);
+        // }
       }
     }
 
