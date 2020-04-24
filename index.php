@@ -81,7 +81,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <a class="btn btn-danger" href="logout.php" role="button">Sign out</a>
     </nav>
   </div>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row justify-content-center py-4">
       <div class="col-10 text-center">
         <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>, welcome to MasterMon</h1>
@@ -126,14 +126,27 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
               $displays_text_tab = $displays_text = "";
               for ($x = 1; $x <= $row['display_count']; $x++) {
                 if ($row['type'] == "arduino") {
-                  ;
-                } else if ($row['type'] == "temp_def_g2") {
+                  $displays_text_tab .= "<a class=\"nav-link\" id=\"v-pills-display-{$cur_id}_{$x}-tab\" data-toggle=\"pill\" href=\"#v-pills-display-{$cur_id}_{$x}\" role=\"tab\" aria-controls=\"v-pills-display-{$cur_id}_{$x}\" aria-selected=\"false\">Display #{$x}</a>";
+                  $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}_{$x}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}_{$x}-tab\"></div>";
+                }
+                else if ($row['type'] == "temp_def_g2") {
                   if ($x < $row['analog_start'] || $x > $row['analog_end']) {
                     continue;
+                  } else{
+                    for ($y = 1; $y <= 2; $y++) {
+                      $id = $row['rtu_id'];
+                      $actual_point = (1+($y-1)*32);
+                      $sql = "SELECT is_enabled FROM standing_alarms WHERE rtu_id = {$id} AND display = {$x} AND point = {$actual_point}";
+                      $is_enabled_row = $mysqli->query($sql);
+                      $is_enabled_obj = $is_enabled_row->fetch_assoc();
+                      if ($is_enabled_obj['is_enabled'] == 1 || $is_enabled_obj['is_enabled'] == "1") {
+                        $displays_text_tab .= "<a class=\"nav-link\" id=\"v-pills-display-{$cur_id}_{$x}_{$y}-tab\" data-toggle=\"pill\" href=\"#v-pills-display-{$cur_id}_{$x}_{$y}\" role=\"tab\" aria-controls=\"v-pills-display-{$cur_id}_{$x}_{$y}\" aria-selected=\"false\">Display #{$x} {$y}</a>";
+                        $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}_{$x}_{$y}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}_{$x}_{$y}-tab\"></div>";      
+                      }
+
+                    }
                   }
                 }
-                $displays_text_tab .= "<a class=\"nav-link\" id=\"v-pills-display-{$cur_id}_{$x}-tab\" data-toggle=\"pill\" href=\"#v-pills-display-{$cur_id}_{$x}\" role=\"tab\" aria-controls=\"v-pills-display-{$cur_id}_{$x}\" aria-selected=\"false\">Display #{$x}</a>";
-                $displays_text .= "<div class=\"tab-pane fade\" id=\"v-pills-display-{$cur_id}_{$x}\" role=\"tabpanel\" aria-labelledby=\"v-pills-display-{$cur_id}_{$x}-tab\"></div>";
               }
 
               $stnd_alm_txt = "<table class=\"table table-striped\"><thead><tr>

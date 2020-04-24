@@ -1,7 +1,7 @@
 let update_delay = 1000;
 
 function to_f(c) {
-  return Number((1.8*c+32).toFixed(1));
+  return Number((1.8*c+32).toFixed(2));
 }
 
 var is_celcius = 0;
@@ -229,17 +229,74 @@ function update_temp_new() {
         // if (alarm_count) $(".alarm-icon-" + data_obj[i].rtu_id).html(ALERT_ICON);
         // else $(".alarm-icon-" + data_obj[i].rtu_id).html("");
 
+
+
         //updating the thresholds
-        for (let k = 0; k < Number(data_obj[i].display_count); k++) {
-          //updating the canvases
-          let id_text = data_obj[i].standing[4*k].rtu_id + "_" + data_obj[i].standing[4*k].display;
-          // console.log(id_text);
-          $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
-          draw_threshold("threshold_canvas_" + id_text,
-            data_obj[i].standing[4*k+0].threshold_value, data_obj[i].standing[4*k+1].threshold_value,
-            data_obj[i].standing[4*k+2].threshold_value, data_obj[i].standing[4*k+3].threshold_value,
-            data_obj[i].standing[4*k].analog_value, data_obj[i].standing[4*k].unit);
+        
+        if(data_obj[i].type == "arduino") {
+          for (let k = 0; k < Number(data_obj[i].display_count); k++) {
+            //updating the canvases
+            let id_text = data_obj[i].standing[4*k].rtu_id + "_" + data_obj[i].standing[4*k].display;
+            // console.log(id_text);
+            $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
+            draw_threshold("threshold_canvas_" + id_text,
+              data_obj[i].standing[4*k+0].threshold_value, data_obj[i].standing[4*k+1].threshold_value,
+              data_obj[i].standing[4*k+2].threshold_value, data_obj[i].standing[4*k+3].threshold_value,
+              data_obj[i].standing[4*k].analog_value, data_obj[i].standing[4*k].unit);
+          }
         }
+        if (data_obj[i].type == "temp_def_g2") {
+
+          let first_analog_i = 0;
+          for (; first_analog_i < data_obj[i].standing.length && data_obj[i].standing[first_analog_i].display != data_obj[i].analog_start; first_analog_i++);
+          // console.log(first_analog_i);
+          
+
+          for (let k = 0; k <= (Number(data_obj[i].analog_end)-Number(data_obj[i].analog_start)); k++) {
+            for (let o = 0; o < 2; o++) {
+              if (data_obj[i].standing[first_analog_i+8*k+4*o].is_enabled == "1") {
+                //updating the canvases
+                let id_text = data_obj[i].standing[first_analog_i+8*k+4*o].rtu_id + "_" + data_obj[i].standing[first_analog_i+8*k+4*o].display + "_" + (o+1).toString();
+                // console.log(id_text);
+                let name_id = `#v-pills-display-${data_obj[i].standing[first_analog_i+8*k+4*o].rtu_id}_${data_obj[i].standing[first_analog_i+8*k+4*o].display}_${o+1}-tab`;
+                console.log(name_id);
+
+                var str =data_obj[i].standing[first_analog_i+8*k+4*o].description;
+                var lastIndex = str.lastIndexOf(" ");
+                str = str.substring(0, lastIndex);
+                var lastIndex = str.lastIndexOf(" ");
+                str = str.substring(0, lastIndex);
+
+                $(name_id).html(str);
+
+
+                $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
+                draw_threshold("threshold_canvas_" + id_text,
+                  data_obj[i].standing[first_analog_i+8*k+4*o+0].threshold_value, data_obj[i].standing[first_analog_i+8*k+4*o+1].threshold_value,
+                  data_obj[i].standing[first_analog_i+8*k+4*o+2].threshold_value, data_obj[i].standing[first_analog_i+8*k+4*o+3].threshold_value,
+                  data_obj[i].standing[first_analog_i+8*k+4*o].analog_value, data_obj[i].standing[first_analog_i+8*k+4*o].unit);
+              }
+            }
+          }
+
+          // if (k < (data_obj[i].analog_start-1) || k > (data_obj[i].analog_end-1)) {
+          //   continue;
+          // } else {
+          //   for (let y = 1; y <= 2; y++) {
+          //     //updating the canvases
+          //     let id_text = data_obj[i].standing[4*k].rtu_id + "_" + data_obj[i].standing[4*k].display + "_" + y.toString();
+          //     // console.log(id_text);
+          //     $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
+          //     draw_threshold("threshold_canvas_" + id_text,
+          //       data_obj[i].standing[4*k+0].threshold_value, data_obj[i].standing[4*k+1].threshold_value,
+          //       data_obj[i].standing[4*k+2].threshold_value, data_obj[i].standing[4*k+3].threshold_value,
+          //       data_obj[i].standing[4*k].analog_value, data_obj[i].standing[4*k].unit);
+          //   }
+          // }
+        
+        
+        }
+        
       }
     }
   })

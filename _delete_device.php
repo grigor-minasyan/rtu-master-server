@@ -28,8 +28,15 @@ if ($test->is_admin) {
   if ($mysqli->query($sql) === TRUE) {
     if (mysqli_affected_rows($mysqli)) {
       $sql = "DELETE FROM event_history WHERE rtu_id={$device_id_to_delete}";
+      $sql2 = "DELETE FROM standing_alarms WHERE rtu_id={$device_id_to_delete}";
       if ($mysqli->query($sql) === TRUE) {
-        echo ("Successfully removed device #{$device_id_to_delete} and ".mysqli_affected_rows($mysqli)." associated data.");
+        $del_events = mysqli_affected_rows($mysqli);
+
+        if ($mysqli->query($sql2) === TRUE) {
+          $del_alms = mysqli_affected_rows($mysqli);
+          echo ("Successfully removed device #{$device_id_to_delete} with {$del_events} events and {$del_alms} alarms");
+        } else echo "Error connecting: " . $mysqli->error;
+        
       } else echo "Error connecting: " . $mysqli->error;
     }
     else echo "Successfully submitted but no device was found";
