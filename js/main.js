@@ -213,17 +213,21 @@ function update_temp_new() {
 
         //updating the standing alarms table
         let standing_str = "";
+        let all_alarms_text = "";
         let alarm_count = 0;
         for (let j = 0; j < data_obj[i].standing.length; j++) {
-          if (data_obj[i].standing[j].is_set == "0" || data_obj[i].standing[j].is_enabled == "0") {continue;}
-          standing_str +="<tr>";
-          standing_str += "<td>" + data_obj[i].standing[j].display + "</td>";
-          standing_str += "<td>" + data_obj[i].standing[j].point + "</td>";
-          standing_str += "<td>" + data_obj[i].standing[j].description + "</td>";
-          standing_str += "<td>" + (data_obj[i].standing[j].is_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>";
-          standing_str += "</tr>";
+          let add_str = "<tr>" + "<td>" + data_obj[i].standing[j].display + "</td>" +
+                                  "<td>" + data_obj[i].standing[j].point + "</td>" + 
+                                  "<td>" + data_obj[i].standing[j].description + "</td>" +
+                                  "<td>" + (data_obj[i].standing[j].is_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>" + 
+                                  "</tr>";
+          if (data_obj[i].standing[j].is_set != "0" && data_obj[i].standing[j].is_enabled != "0") {
+            standing_str += add_str;
+          }
+          all_alarms_text += add_str;
         }
         $("#standing_table_"+data_obj[i].rtu_id).html(standing_str);
+        $("#all_alarm_table_"+data_obj[i].rtu_id).html(all_alarms_text);
         //change the standing alarm text to red if there are any alarms
         add_alm_icon(alarm_count, data_obj[i].rtu_id);
         // if (alarm_count) $(".alarm-icon-" + data_obj[i].rtu_id).html(ALERT_ICON);

@@ -155,6 +155,12 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <th scope=\"col\">Description</th>
                                             <th scope=\"col\">Status</th>
                                             </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
+              $all_alm_txt = "<table class=\"table table-striped\"><thead><tr>
+                                            <th scope=\"col\">Display #</th>
+                                            <th scope=\"col\">Point</th>
+                                            <th scope=\"col\">Description</th>
+                                            <th scope=\"col\">Status</th>
+                                            </tr></thead><tbody id = \"all_alarm_table_{$cur_id}\"></tbody></table>";
 
 
               $events_in_text = "<table class=\"table table-striped\"><thead><tr>
@@ -174,6 +180,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             <div class=\"nav flex-column nav-pills\" id=\"v-pills-tab\" role=\"tablist\" aria-orientation=\"vertical\">
                               <a class=\"nav-link active\" id=\"v-pills-event-history-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-event-history-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-event-history-{$cur_id}\" aria-selected=\"true\">Event history</a>
                               <a class=\"nav-link\" id=\"v-pills-standing-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-standing-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-standing-{$cur_id}\" aria-selected=\"false\">Standing alarms <span class = \"text-danger alarm-icon-{$cur_id}\"></span></a>
+                              <a class=\"nav-link\" id=\"v-pills-all-{$cur_id}-tab\" data-toggle=\"pill\" href=\"#v-pills-all-{$cur_id}\" role=\"tab\" aria-controls=\"v-pills-all-{$cur_id}\" aria-selected=\"false\">All alarms <span class = \"text-danger alarm-icon-{$cur_id}\"></span></a>
                               {$displays_text_tab}
                             </div>
                           </div>
@@ -181,6 +188,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             <div class=\"tab-content\" id=\"v-pills-tabContent\">
                               <div class=\"tab-pane fade show active\" id=\"v-pills-event-history-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-event-history-{$cur_id}-tab\">$events_in_text</div>
                               <div class=\"tab-pane fade\" id=\"v-pills-standing-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-standing-{$cur_id}-tab\">{$stnd_alm_txt}</div>
+                              <div class=\"tab-pane fade\" id=\"v-pills-all-{$cur_id}\" role=\"tabpanel\" aria-labelledby=\"v-pills-all-{$cur_id}-tab\">{$all_alm_txt}</div>
                               {$displays_text}
                             </div>
                           </div>
