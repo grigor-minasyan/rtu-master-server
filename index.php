@@ -156,12 +156,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <th scope=\"col\">Display #</th>
                                             <th scope=\"col\">Point</th>
                                             <th scope=\"col\">Description</th>
+                                            <th scope=\"col\">Enabled</th>
                                             <th scope=\"col\">Status</th>
                                             </tr></thead><tbody id = \"standing_table_{$cur_id}\"></tbody></table>";
               $all_alm_txt = "<table class=\"table table-striped\"><thead><tr>
                                             <th scope=\"col\">Display #</th>
                                             <th scope=\"col\">Point</th>
                                             <th scope=\"col\">Description</th>
+                                            <th scope=\"col\">Enabled</th>
                                             <th scope=\"col\">Status</th>
                                             </tr></thead><tbody id = \"all_alarm_table_{$cur_id}\"></tbody></table>";
 

@@ -1,7 +1,12 @@
 let update_delay = 1000;
 
 function to_f(c) {
-  return Number((1.8*c+32).toFixed(2));
+  let f = parseFloat(c);
+  f = 1.8*f + 32;
+  // let k = f.toFixed(2);
+  // console.log(f)
+  // return k;
+  return f;
 }
 
 var is_celcius = 0;
@@ -21,11 +26,11 @@ function add_alm_icon(x, id) {
 }
 
 function draw_threshold(id, t1, t2, t3, t4, cur, unit) {
-  t1 = parseInt(t1);
-  t2 = parseInt(t2);
-  t3 = parseInt(t3);
-  t4 = parseInt(t4);
-  cur = parseInt(cur);
+  t1 = parseFloat(t1);
+  t2 = parseFloat(t2);
+  t3 = parseFloat(t3);
+  t4 = parseFloat(t4);
+  cur = parseFloat(cur);
   if (!is_celcius && unit == "c") {
     t1 = to_f(t1);
     t2 = to_f(t2);
@@ -49,19 +54,19 @@ function draw_threshold(id, t1, t2, t3, t4, cur, unit) {
 
   ctx.fillStyle = "#2731e6";
   ctx.fillRect(width*(t1-start)/(end-start),start_y,width*(t2-t1)/(end-start),height/2);
-  ctx.fillText(t1.toFixed(1).toString(), width*(t1-start)/(end-start)-text_offset, start_y-10);
+  ctx.fillText(t1.toString(), width*(t1-start)/(end-start)-text_offset, start_y-10);
 
   ctx.fillStyle = "#2cbf40";
   ctx.fillRect(width*(t2-start)/(end-start),start_y,width*(t3-t2)/(end-start),height/2);
-  ctx.fillText(t2.toFixed(1).toString(), width*(t2-start)/(end-start)-text_offset, start_y-10);
+  ctx.fillText(t2.toString(), width*(t2-start)/(end-start)-text_offset, start_y-10);
 
   ctx.fillStyle = "#a19600";
   ctx.fillRect(width*(t3-start)/(end-start),start_y,width*(t4-t3)/(end-start),height/2);
-  ctx.fillText(t3.toFixed(1).toString(), width*(t3-start)/(end-start)-text_offset, start_y-10);
+  ctx.fillText(t3.toString(), width*(t3-start)/(end-start)-text_offset, start_y-10);
 
   ctx.fillStyle = "#cf2115";
   ctx.fillRect(width*(t4-start)/(end-start),start_y,width*(end-t4)/(end-start),height/2);
-  ctx.fillText(t4.toFixed(1).toString(), width*(t4-start)/(end-start)-text_offset, start_y-10);
+  ctx.fillText(t4.toString(), width*(t4-start)/(end-start)-text_offset, start_y-10);
 
   var cur_pos = cur;
   if (cur_pos < start+6*range/100) {
@@ -71,7 +76,7 @@ function draw_threshold(id, t1, t2, t3, t4, cur, unit) {
   }
   ctx.fillStyle = "#222222";
   ctx.fillRect(width*(cur_pos-start)/(end-start),start_y,2,height/2+10);
-  ctx.fillText(cur.toFixed(1).toString() + (unit == "c" ? (is_celcius ? "C" : "F") : unit), width*(cur_pos-start)/(end-start)-text_offset, height/2+start_y+30);
+  ctx.fillText(cur.toString() + (unit == "c" ? (is_celcius ? "C" : "F") : unit), width*(cur_pos-start)/(end-start)-text_offset, height/2+start_y+30);
 }
 
 function validate_form(ipaddress, port, id){
@@ -219,12 +224,15 @@ function update_temp_new() {
           let add_str = "<tr>" + "<td>" + data_obj[i].standing[j].display + "</td>" +
                                   "<td>" + data_obj[i].standing[j].point + "</td>" + 
                                   "<td>" + data_obj[i].standing[j].description + "</td>" +
+                                  "<td>" + (data_obj[i].standing[j].is_enabled == "1" ? ("<span class = \"text-success\">Enabled</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-danger\">Disabled</span>") + "</td>" + 
                                   "<td>" + (data_obj[i].standing[j].is_set == "1" ? ("<span class = \"text-danger\">Alarm</span>" + (alarm_count++ ? "" : "")) : "<span class = \"text-success\">Clear</span>") + "</td>" + 
                                   "</tr>";
-          if (data_obj[i].standing[j].is_set != "0" && data_obj[i].standing[j].is_enabled != "0") {
+
+          if (data_obj[i].standing[j].is_enabled != "0" && data_obj[i].standing[j].is_set != "0") {
             standing_str += add_str;
           }
           all_alarms_text += add_str;
+          
         }
         $("#standing_table_"+data_obj[i].rtu_id).html(standing_str);
         $("#all_alarm_table_"+data_obj[i].rtu_id).html(all_alarms_text);
@@ -267,10 +275,8 @@ function update_temp_new() {
                 // console.log(name_id);
 
                 var str =data_obj[i].standing[first_analog_i+8*k+4*o].description;
-                var lastIndex = str.lastIndexOf(" ");
-                str = str.substring(0, lastIndex);
-                var lastIndex = str.lastIndexOf(" ");
-                str = str.substring(0, lastIndex);
+                str = str.substring(0, str.lastIndexOf(" "));
+                str = str.substring(0, str.lastIndexOf(" "));
 
                 $(name_id).html(str);
 
@@ -280,28 +286,11 @@ function update_temp_new() {
                   data_obj[i].standing[first_analog_i+8*k+4*o+0].threshold_value, data_obj[i].standing[first_analog_i+8*k+4*o+1].threshold_value,
                   data_obj[i].standing[first_analog_i+8*k+4*o+2].threshold_value, data_obj[i].standing[first_analog_i+8*k+4*o+3].threshold_value,
                   data_obj[i].standing[first_analog_i+8*k+4*o].analog_value, data_obj[i].standing[first_analog_i+8*k+4*o].unit);
+                // console.log(data_obj[i].standing[first_analog_i+8*k+4*o].analog_value);
               }
             }
           }
-
-          // if (k < (data_obj[i].analog_start-1) || k > (data_obj[i].analog_end-1)) {
-          //   continue;
-          // } else {
-          //   for (let y = 1; y <= 2; y++) {
-          //     //updating the canvases
-          //     let id_text = data_obj[i].standing[4*k].rtu_id + "_" + data_obj[i].standing[4*k].display + "_" + y.toString();
-          //     // console.log(id_text);
-          //     $("#v-pills-display-"+id_text).html("<canvas id=\"threshold_canvas_" + id_text + "\" width=\"" + $("#v-pills-display-"+id_text).width() + "\" height=\"200\">Unsupported</canvas>");
-          //     draw_threshold("threshold_canvas_" + id_text,
-          //       data_obj[i].standing[4*k+0].threshold_value, data_obj[i].standing[4*k+1].threshold_value,
-          //       data_obj[i].standing[4*k+2].threshold_value, data_obj[i].standing[4*k+3].threshold_value,
-          //       data_obj[i].standing[4*k].analog_value, data_obj[i].standing[4*k].unit);
-          //   }
-          // }
-        
-        
         }
-        
       }
     }
   })
