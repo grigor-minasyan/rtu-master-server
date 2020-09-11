@@ -2,6 +2,9 @@
 
 This project was done as my main project for a bootcamp at a company whose focus is to create remote monitoring solutions for companies with custom needs. 
 
+Here is a video of showing the overview of the funcitons of the Master Station
+https://www.youtube.com/watch?v=sAqVrAxL70c
+
 This repo is half of the whole project. The code in this repo is the web interface of the master station as well as the php files to communicate with the back end. Here are the main features and operations supported by this web server.
 
 * Login / Register / Reset passowrd page. Works with PHP and MySQL database.
